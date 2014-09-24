@@ -5,20 +5,22 @@
         <version>1.0.0</version>
         <title>JsonPoke build task</title>
         <authors>Manish Kumar</authors>
-        <owners>Manish Kumar</owners>        <licenseUrl>https://bitbucket.org/Manishkp/jsonpoke.msbuild/src/810f5df1920f7ff27f8d5531af1a3d8bc1fa24d8/nugetSource/license.txt?at=master</licenseUrl>        <projectUrl>https://bitbucket.org/Manishkp/jsonpoke.msbuild</projectUrl>
+        <owners>Manish Kumar</owners>
+        <licenseUrl>https://bitbucket.org/Manishkp/jsonpeek.msbuild/raw/ce89c93089b2b253cc06530ed5e6c39f9e6a6d66/nugetSource/license.txt</licenseUrl>
+        <projectUrl>https://bitbucket.org/Manishkp/jsonpeek.msbuild/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Jsonpoke msbuild task.</description>
         <summary>Jsonpoke msbuild task</summary>
         <releaseNotes>Jsonpoke msbuild task</releaseNotes>
         <tags>stylecop</tags>
- 	<dependencies>
-            <dependency id="Newtonsoft.Json" version="6.0.5" />           
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="6.0.5" />
         </dependencies>
     </metadata>
-      <files>
-        <file src="build\JsonPoke.MSBuild.Targets" target="build\JsonPoke.MSBuild.Targets" />     
+    <files>
+        <file src="build\JsonPoke.MSBuild.Targets" target="build\JsonPoke.MSBuild.Targets" />
+        <file src="tools\JsonPeek.MSBuild.dll" target="tools\JsonPeek.MSBuild.dll" />
+        <file src="tools\Newtonsoft.Json.dll" target="tools\Newtonsoft.Json.dll" />
         <file src="license.txt" target="license.txt" />
-        <file src="tools\JsonPeek.MSBuild.dll" target="tools\JsonPeek.MSBuild.dll" />  
-	<file src="tools\Newtonsoft.Json.dll" target="tools\Newtonsoft.Json.dll" />  
     </files>
 </package>
