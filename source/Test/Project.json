@@ -1,0 +1,22 @@
+{
+  "Project": {
+    "Id": "project1",
+    "IncludedLibraryVariableSetIds": [
+      "LibraryVariableSets-33",
+      "LibraryVariableSets-69",
+      "LibraryVariableSets-133",
+      "LibraryVariableSets-66",
+      "LibraryVariableSets-65",
+      "LibraryVariableSets-68",
+      "LibraryVariableSets-67"
+    ],
+    "DefaultToSkipIfAlreadyInstalled": false,
+    "VersioningStrategy": {
+      "DonorPackageStepId": "2624300c-958e-45ec-ae87-aadb3a3df790",
+      "Template": null
+    },
+    "Name": "Empty-FromTest",
+    "Description": "",
+    "IsDisabled": false
+  }
+}

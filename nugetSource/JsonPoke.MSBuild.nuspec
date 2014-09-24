@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>JsonPoke.MSBuild</id>
+        <version>1.0.0</version>
+        <title>JsonPoke build task</title>
+        <authors>Manish Kumar</authors>
+        <owners>Manish Kumar</owners>        <licenseUrl>https://bitbucket.org/Manishkp/jsonpoke.msbuild/src/810f5df1920f7ff27f8d5531af1a3d8bc1fa24d8/nugetSource/license.txt?at=master</licenseUrl>        <projectUrl>https://bitbucket.org/Manishkp/jsonpoke.msbuild</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Jsonpoke msbuild task.</description>
+        <summary>Jsonpoke msbuild task</summary>
+        <releaseNotes>Jsonpoke msbuild task</releaseNotes>
+        <tags>stylecop</tags>
+ 	<dependencies>
+            <dependency id="Newtonsoft.Json" version="6.0.5" />           
+        </dependencies>
+    </metadata>
+      <files>
+        <file src="build\JsonPoke.MSBuild.Targets" target="build\JsonPoke.MSBuild.Targets" />     
+        <file src="license.txt" target="license.txt" />
+        <file src="tools\JsonPeek.MSBuild.dll" target="tools\JsonPeek.MSBuild.dll" />  
+	<file src="tools\Newtonsoft.Json.dll" target="tools\Newtonsoft.Json.dll" />  
+    </files>
+</package>
