@@ -2,13 +2,14 @@
   "Project": {
     "Id": "project1",
     "IncludedLibraryVariableSetIds": [
-      "LibraryVariableSets-33",
-      "LibraryVariableSets-69",
-      "LibraryVariableSets-133",
-      "LibraryVariableSets-66",
-      "LibraryVariableSets-65",
-      "LibraryVariableSets-68",
-      "LibraryVariableSets-67"
+      {
+        "Name": "Lib-68",
+        "Value": "Empty-FromTest"
+      },
+      {
+        "Name": "Lib-69",
+        "Value": "ToBeReplaced"
+      }
     ],
     "DefaultToSkipIfAlreadyInstalled": false,
     "VersioningStrategy": {

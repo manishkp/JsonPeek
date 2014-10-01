@@ -2,21 +2,21 @@
   "Project": {
     "Id": "project1",
     "IncludedLibraryVariableSetIds": [
-      "LibraryVariableSets-33",
-      "LibraryVariableSets-69",
-      "LibraryVariableSets-133",
-      "LibraryVariableSets-66",
-      "LibraryVariableSets-65",
-      "LibraryVariableSets-68",
-      "LibraryVariableSets-67"
+      {
+        "Name": "Lib-68",
+        "Value": "ToBeReplaced"
+      },
+      {
+        "Name": "Lib-69",
+        "Value": "ToBeReplaced"
+      }
     ],
     "DefaultToSkipIfAlreadyInstalled": false,
     "VersioningStrategy": {
       "DonorPackageStepId": "2624300c-958e-45ec-ae87-aadb3a3df790",
       "Template": null
     },
-    "Name": "Unified Communications",
-    "Slug": "unified-communications",
+    "Name": "ProjectName",
     "Description": "",
     "IsDisabled": false,
   }

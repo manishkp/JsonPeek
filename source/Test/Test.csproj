@@ -67,14 +67,20 @@
   </Target>
     -->
   <Target Name="AfterBuild">
-    <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" XPath="\Project\Name">
+    <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.Name">
     </JsonPoke>
+    <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
+    </JsonPoke>
+    <JsonPeek FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
+      <Output TaskParameter="Value" PropertyName="Lib69Value"/>
+    </JsonPeek>
+    <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : $(Lib69Value)"/>
   </Target>
-  <Import Project="..\packages\JsonPoke.MSBuild.1.0.0\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.0\build\JsonPoke.MSBuild.Targets')" />
+  <Import Project="..\packages\JsonPoke.MSBuild.1.0.2\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.2\build\JsonPoke.MSBuild.Targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\JsonPoke.MSBuild.1.0.0\build\JsonPoke.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JsonPoke.MSBuild.1.0.0\build\JsonPoke.MSBuild.Targets'))" />
+    <Error Condition="!Exists('..\packages\JsonPoke.MSBuild.1.0.2\build\JsonPoke.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JsonPoke.MSBuild.1.0.2\build\JsonPoke.MSBuild.Targets'))" />
   </Target>
 </Project>

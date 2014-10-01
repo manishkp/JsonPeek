@@ -1,14 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="JsonPoke.cs">
+// <copyright file="JsonPeek.cs">
 //   Copyright belongs to Manish Kumar
 // </copyright>
 // <summary>
-//   Build task to replace value at Jpath
+//   Build task to return Jpath value
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace JsonPeek.MSBuild
 {
+    using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
@@ -20,7 +22,7 @@ namespace JsonPeek.MSBuild
     /// <summary>
     /// Build task to convert Resource file to Java script Object Notation file
     /// </summary>
-    public class JsonPoke : ITask
+    public class JsonPeek : ITask
     {
         /// <summary>
         /// Gets or sets Build Engine
@@ -47,7 +49,7 @@ namespace JsonPeek.MSBuild
         /// <summary>
         /// Gets or sets Object Value
         /// </summary>
-        [Required]
+        [Output]
         public string Value { get; set; }   
   
         /// <summary>
@@ -70,63 +72,57 @@ namespace JsonPeek.MSBuild
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
-                            "Skipping json replacement, as there are no json files found at {0}", jsonFullPath),
+                            "Skipping json peek, as there are no json files found at {0}",
+                            jsonFullPath),
                         string.Empty,
-                        "JsonPoke",
+                        "JsonPeek",
                         MessageImportance.Normal));
             }
 
-            if (string.IsNullOrEmpty(this.JPath) || string.IsNullOrEmpty(this.Value))
+            if (string.IsNullOrEmpty(this.JPath)
+                || string.IsNullOrEmpty(this.Value))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
-                        string.Format(
-                            "Skipping json replacement, no xpath or value specified"),
+                        string.Format("Skipping json peek, no xpath or value specified"),
                         string.Empty,
-                        "JsonPoke",
+                        "JsonPeek",
                         MessageImportance.Normal));
             }
-          
+
             this.BuildEngine.LogMessageEvent(
                 new BuildMessageEventArgs(
-                    string.Format("Started json poke for file {0}", jsonFullPath),
+                    string.Format("Started json peek for file {0}", jsonFullPath),
                     string.Empty,
-                    "JsonPoke",
+                    "JsonPeek",
                     MessageImportance.Normal));
 
+            var returnValue = new List<string>();
 
-            JObject root = null;
-           
-            // Replacing the value 
             using (var sr = new StreamReader(jsonFullPath))
             {
                 var content = sr.ReadToEnd();
-                root = JObject.Parse(content);
-
+                var root = JObject.Parse(content);
                 var currentNodes = root.SelectTokens(this.JPath, false);
-
                 foreach (var currentNode in currentNodes)
                 {
                     this.BuildEngine.LogMessageEvent(
-                       new BuildMessageEventArgs(
-                       string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.Value),
-                       string.Empty,
-                       "JsonPoke",
-                       MessageImportance.Normal));     
-                    currentNode.Replace(new JValue(this.Value));
+                        new BuildMessageEventArgs(
+                            string.Format("Found value : {0}", currentNode.ToString()),
+                            string.Empty,
+                            "JsonPeek",
+                            MessageImportance.Normal));
+                    returnValue.Add(currentNode.ToString());
                 }
             }
 
-            if (root != null)
+            if (returnValue.Count == 1)
             {
-                using (FileStream fs = File.Open(jsonFullPath, FileMode.Create))
-                using (var sw = new StreamWriter(fs))
-                using (var jw = new JsonTextWriter(sw))
-                {
-                    jw.Formatting = Formatting.Indented;
-
-                    root.WriteTo(jw);
-                }
+                this.Value = returnValue[0];
+            }
+            else if (returnValue.Count > 1)
+            {
+                this.Value = JsonConvert.SerializeObject(returnValue);
             }
 
             return true;

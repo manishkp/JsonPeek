@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonPeek.cs" />
     <Compile Include="JsonPoke.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
