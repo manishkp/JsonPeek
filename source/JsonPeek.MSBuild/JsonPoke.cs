@@ -9,6 +9,7 @@
 
 namespace JsonPeek.MSBuild
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
@@ -96,37 +97,58 @@ namespace JsonPeek.MSBuild
 
 
             JObject root = null;
-           
-            // Replacing the value 
-            using (var sr = new StreamReader(jsonFullPath))
+
+            try
             {
-                var content = sr.ReadToEnd();
-                root = JObject.Parse(content);
-
-                var currentNodes = root.SelectTokens(this.JPath, false);
-
-                foreach (var currentNode in currentNodes)
+                // Replacing the value 
+                using (var sr = new StreamReader(jsonFullPath))
                 {
-                    this.BuildEngine.LogMessageEvent(
-                       new BuildMessageEventArgs(
-                       string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.Value),
-                       string.Empty,
-                       "JsonPoke",
-                       MessageImportance.Normal));     
-                    currentNode.Replace(new JValue(this.Value));
+                    var content = sr.ReadToEnd();
+                    root = JObject.Parse(content);
+
+                    var currentNodes = root.SelectTokens(this.JPath, false);
+
+                    foreach (var currentNode in currentNodes)
+                    {
+                        this.BuildEngine.LogMessageEvent(
+                            new BuildMessageEventArgs(
+                                string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.Value),
+                                string.Empty,
+                                "JsonPoke",
+                                MessageImportance.Normal));
+                        currentNode.Replace(new JValue(this.Value));
+                    }
+                }
+
+                if (root != null)
+                {
+                    using (FileStream fs = File.Open(jsonFullPath, FileMode.Create))
+                    using (var sw = new StreamWriter(fs))
+                    using (var jw = new JsonTextWriter(sw))
+                    {
+                        // Trying to fix file not being closed issue
+                        jw.CloseOutput = true;
+                        jw.Formatting = Formatting.Indented;
+                        root.WriteTo(jw);
+                    }
                 }
             }
-
-            if (root != null)
+            catch (Exception)
             {
-                using (FileStream fs = File.Open(jsonFullPath, FileMode.Create))
-                using (var sw = new StreamWriter(fs))
-                using (var jw = new JsonTextWriter(sw))
-                {
-                    jw.Formatting = Formatting.Indented;
-
-                    root.WriteTo(jw);
-                }
+                // Adding information about jpath and full filepath for debugging purposes 
+                this.BuildEngine.LogErrorEvent(
+                    new BuildErrorEventArgs(
+                        string.Empty,
+                        string.Empty,
+                        this.JsonFile,
+                        0,
+                        0,
+                        0,
+                        0,
+                        string.Format("Failed to replace jpath:{0} in file:{1}", this.JPath, jsonFullPath),
+                        string.Empty,
+                        "JsonPoke"));
+                throw;
             }
 
             return true;
