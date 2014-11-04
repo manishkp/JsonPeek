@@ -13,8 +13,10 @@ namespace JsonPeek.MSBuild
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
 
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -47,11 +49,11 @@ namespace JsonPeek.MSBuild
         public string JsonFile { get; set; }     
    
         /// <summary>
-        /// Gets or sets Object Value
+        /// Gets the result or array of results
         /// </summary>
         [Output]
-        public string Value { get; set; }   
-  
+        public ITaskItem[] Result { get; private set; }
+
         /// <summary>
         /// Gets or sets JPath
         /// This is current JPath supported by Newtonsoft.Json 
@@ -79,12 +81,11 @@ namespace JsonPeek.MSBuild
                         MessageImportance.Normal));
             }
 
-            if (string.IsNullOrEmpty(this.JPath)
-                || string.IsNullOrEmpty(this.Value))
+            if (string.IsNullOrEmpty(this.JPath))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
-                        string.Format("Skipping json peek, no xpath or value specified"),
+                        string.Format("Skipping json peek, no xpath specified"),
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Normal));
@@ -116,15 +117,7 @@ namespace JsonPeek.MSBuild
                 }
             }
 
-            if (returnValue.Count == 1)
-            {
-                this.Value = returnValue[0];
-            }
-            else if (returnValue.Count > 1)
-            {
-                this.Value = JsonConvert.SerializeObject(returnValue);
-            }
-
+            this.Result = returnValue.Select(outputVal => (ITaskItem)new TaskItem(outputVal)).ToArray();
             return true;
         }
     }

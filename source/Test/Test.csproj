@@ -72,9 +72,9 @@
     <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
     <JsonPeek FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
-      <Output TaskParameter="Value" PropertyName="Lib69Value"/>
+      <Output TaskParameter="Result" ItemName="Lib69Value"/>
     </JsonPeek>
-    <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : $(Lib69Value)"/>
+    <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)"/>
   </Target>
   <Import Project="..\packages\JsonPoke.MSBuild.1.0.2\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.2\build\JsonPoke.MSBuild.Targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
