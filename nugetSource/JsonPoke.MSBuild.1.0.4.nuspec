@@ -18,10 +18,10 @@ eg:  &lt;JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.js
     &lt;JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibrary[?(@.Name == 'Lib-1')].Value"&gt;
     &lt;/JsonPoke&gt;
 
- &lt;JsonPeek FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value"&gt;
-      &lt;Output TaskParameter="Value" PropertyName="Lib69Value"/&gt;
+ &lt;JsonPeek FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" JPath="XYZ.ABC[?(@.Name == 'L-1')].Value"&gt;
+      &lt;Output TaskParameter="Result" ItemName="L1Values"/&gt;
     &lt;/JsonPeek&gt;
-    &lt;Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : $(Lib69Value)"/&gt;</description>
+    &lt;Message Text="Values: @(L1Values)"/&gt;</description>
         <summary>JsonPoke and JsonPeek build tasks</summary>
         <releaseNotes>1.0.2: Added JPath derived from Newtonsoft.json http://james.newtonking.com/archive/2014/02/01/json-net-6-0-release-1-%E2%80%93-jsonpath-and-f-support
 1.0.4 : Fixing JSONPeek to return ITaskItem[] Result as output</releaseNotes>
