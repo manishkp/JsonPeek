@@ -13,8 +13,10 @@ namespace JsonPeek.MSBuild
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
 
     using Microsoft.Build.Framework;
+    using Microsoft.Build.Utilities;
 
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -48,7 +50,7 @@ namespace JsonPeek.MSBuild
         /// Gets or sets Object Value
         /// </summary>
         [Output]
-        public System.String[] Value { get; set; }
+        public ITaskItem[] Result { get; private set; }
 
         /// <summary>
         /// Gets or sets JPath
@@ -96,7 +98,7 @@ namespace JsonPeek.MSBuild
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
-                        string.Format("Skipping json peek, no JPath or value specified"),
+                        string.Format("Skipping json peek, no xpath or value specified"),
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Normal));
@@ -149,8 +151,7 @@ namespace JsonPeek.MSBuild
                 returnValue.Add(currentNode.ToString());
             }
 
-            this.Value = returnValue.ToArray();
-
+            this.Result = returnValue.Select(outputVal => (ITaskItem)new TaskItem(outputVal)).ToArray();
             return true;
         }
     }

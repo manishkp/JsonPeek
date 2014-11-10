@@ -9,6 +9,10 @@
       {
         "Name": "Lib-69",
         "Value": "ToBeReplaced"
+      },
+      {
+        "Name": "Lib-69",
+        "Value": "ToBeReplaced1"
       }
     ],
     "DefaultToSkipIfAlreadyInstalled": false,
