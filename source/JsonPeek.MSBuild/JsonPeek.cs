@@ -35,26 +35,24 @@ namespace JsonPeek.MSBuild
         public ITaskHost HostObject { get; set; }
 
         /// <summary>
-        /// Gets or sets JSON Full Path
-        /// </summary>
-        [Required]
-        public string FileFullPath { get; set; }
-
-        /// <summary>
         /// Gets or sets JSON File Name
         /// </summary>
-        [Required]
-        public string JsonFile { get; set; }     
-   
+        public string JsonInputPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets JSON content
+        /// </summary>
+        public string JsonContent { get; set; }
+
         /// <summary>
         /// Gets or sets Object Value
         /// </summary>
         [Output]
-        public string Value { get; set; }   
-  
+        public System.String[] Value { get; set; }
+
         /// <summary>
         /// Gets or sets JPath
-        /// This is current JPath supported by Newtonsoft.Json 
+        /// This is current JPath supported by Newtonsoft.Json
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here."),Required]
         public string JPath { get; set; }
@@ -65,65 +63,93 @@ namespace JsonPeek.MSBuild
         /// <returns>True if success</returns>
         public bool Execute()
         {
-            var jsonFullPath = Path.Combine(this.FileFullPath, this.JsonFile);
+            if (string.IsNullOrEmpty(this.JsonInputPath) && string.IsNullOrEmpty(this.JsonContent) ||
+                (!string.IsNullOrEmpty(this.JsonInputPath) && !string.IsNullOrEmpty(this.JsonContent)))
+            {
+                this.BuildEngine.LogMessageEvent(
+                    new BuildMessageEventArgs(
+                    string.Format(
+                    "Skipping json peek, as both 'JsonInputPath' and 'JsonContent' are empty (or both are defined)",
+                    JsonInputPath),
+                    string.Empty,
+                    "JsonPeek",
+                    MessageImportance.Normal));
 
-            if (!File.Exists(jsonFullPath))
+                return false;
+            }
+
+            if (!File.Exists(JsonInputPath) && string.IsNullOrEmpty(this.JsonContent))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
                             "Skipping json peek, as there are no json files found at {0}",
-                            jsonFullPath),
+                            JsonInputPath),
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Normal));
+
+                return false;
             }
 
-            if (string.IsNullOrEmpty(this.JPath)
-                || string.IsNullOrEmpty(this.Value))
+            if (string.IsNullOrEmpty(this.JPath))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
-                        string.Format("Skipping json peek, no xpath or value specified"),
+                        string.Format("Skipping json peek, no JPath or value specified"),
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Normal));
-            }
 
-            this.BuildEngine.LogMessageEvent(
-                new BuildMessageEventArgs(
-                    string.Format("Started json peek for file {0}", jsonFullPath),
-                    string.Empty,
-                    "JsonPeek",
-                    MessageImportance.Normal));
+                return false;
+            }
 
             var returnValue = new List<string>();
 
-            using (var sr = new StreamReader(jsonFullPath))
+            string content;
+
+            if (string.IsNullOrEmpty(this.JsonContent))
             {
-                var content = sr.ReadToEnd();
-                var root = JObject.Parse(content);
-                var currentNodes = root.SelectTokens(this.JPath, false);
-                foreach (var currentNode in currentNodes)
+                this.BuildEngine.LogMessageEvent(
+                    new BuildMessageEventArgs(
+                        string.Format("Started json peek for file {0}", JsonInputPath),
+                        string.Empty,
+                        "JsonPeek",
+                        MessageImportance.Normal));
+
+                using (var sr = new StreamReader(JsonInputPath))
                 {
-                    this.BuildEngine.LogMessageEvent(
-                        new BuildMessageEventArgs(
-                            string.Format("Found value : {0}", currentNode.ToString()),
-                            string.Empty,
-                            "JsonPeek",
-                            MessageImportance.Normal));
-                    returnValue.Add(currentNode.ToString());
+                    content = sr.ReadToEnd();
                 }
             }
+            else
+            {
+                this.BuildEngine.LogMessageEvent(
+                    new BuildMessageEventArgs(
+                        string.Format("Started json peek"),
+                        string.Empty,
+                        "JsonPeek",
+                        MessageImportance.Normal));
 
-            if (returnValue.Count == 1)
-            {
-                this.Value = returnValue[0];
+
+                content = this.JsonContent;
             }
-            else if (returnValue.Count > 1)
+
+
+            var root = JObject.Parse(content);
+            var currentNodes = root.SelectTokens(this.JPath, false);
+            foreach (var currentNode in currentNodes)
             {
-                this.Value = JsonConvert.SerializeObject(returnValue);
+                this.BuildEngine.LogMessageEvent(
+                    new BuildMessageEventArgs(
+                        string.Format("Found value : {0}", currentNode.ToString()),
+                        string.Empty,
+                        "JsonPeek",
+                        MessageImportance.Low));
+                returnValue.Add(currentNode.ToString());
             }
+
+            this.Value = returnValue.ToArray();
 
             return true;
         }
