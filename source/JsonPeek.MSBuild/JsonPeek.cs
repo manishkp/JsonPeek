@@ -98,7 +98,7 @@ namespace JsonPeek.MSBuild
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
-                        string.Format("Skipping json peek, no xpath or value specified"),
+                        string.Format("Skipping json peek, no JPath specified"),
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Normal));
