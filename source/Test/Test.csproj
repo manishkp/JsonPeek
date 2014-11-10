@@ -72,7 +72,7 @@
     </JsonPoke>
     <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
-    <JsonPeek FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
+    <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
       <Output TaskParameter="Result" ItemName="Lib69Value" />
     </JsonPeek>
     <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" />
