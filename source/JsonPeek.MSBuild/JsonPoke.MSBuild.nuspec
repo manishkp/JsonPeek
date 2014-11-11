@@ -12,9 +12,9 @@
         <developmentDependency>true</developmentDependency>
         <description>JsonPoke and JsonPeek build tasks:
 Usage :
-    &lt;JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.Name"&gt;
+    &lt;JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.Name"&gt;
     &lt;/JsonPoke&gt;
-    &lt;JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value"&gt;
+    &lt;JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value"&gt;
     &lt;/JsonPoke&gt;
     &lt;JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value"&gt;
       &lt;Output TaskParameter="Result" ItemName="Lib69Value" /&gt;
