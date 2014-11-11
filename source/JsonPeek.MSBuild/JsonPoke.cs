@@ -32,18 +32,12 @@ namespace JsonPeek.MSBuild
         /// Gets or sets Host Object
         /// </summary>
         public ITaskHost HostObject { get; set; }
-
+      
         /// <summary>
-        /// Gets or sets JSON Full Path
+        /// Gets or sets JSON full file path
         /// </summary>
         [Required]
-        public string FileFullPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets JSON File Name
-        /// </summary>
-        [Required]
-        public string JsonFile { get; set; }     
+        public string JsonInputPath { get; set; }     
    
         /// <summary>
         /// Gets or sets Object Value
@@ -63,18 +57,18 @@ namespace JsonPeek.MSBuild
         /// </summary>
         /// <returns>True if success</returns>
         public bool Execute()
-        {
-            var jsonFullPath = Path.Combine(this.FileFullPath, this.JsonFile);
-
-            if (!File.Exists(jsonFullPath))
+        {          
+            if (!File.Exists(this.JsonInputPath))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
-                            "Skipping json replacement, as there are no json files found at {0}", jsonFullPath),
+                            "Skipping json replacement, as there are no json files found at {0}", this.JsonInputPath),
                         string.Empty,
                         "JsonPoke",
                         MessageImportance.Normal));
+
+                return false;
             }
 
             if (string.IsNullOrEmpty(this.JPath) || string.IsNullOrEmpty(this.Value))
@@ -82,26 +76,26 @@ namespace JsonPeek.MSBuild
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
-                            "Skipping json replacement, no xpath or value specified"),
+                            "Skipping json replacement, no 'JPath' or 'Value' specified"),
                         string.Empty,
                         "JsonPoke",
                         MessageImportance.Normal));
+
+                return false;
             }
           
             this.BuildEngine.LogMessageEvent(
                 new BuildMessageEventArgs(
-                    string.Format("Started json poke for file {0}", jsonFullPath),
+                    string.Format("Started json poke for file {0}", this.JsonInputPath),
                     string.Empty,
                     "JsonPoke",
                     MessageImportance.Normal));
 
-
-            JObject root = null;
-
             try
             {
                 // Replacing the value 
-                using (var sr = new StreamReader(jsonFullPath))
+                JObject root = null;
+                using (var sr = new StreamReader(this.JsonInputPath))
                 {
                     var content = sr.ReadToEnd();
                     root = JObject.Parse(content);
@@ -120,17 +114,14 @@ namespace JsonPeek.MSBuild
                     }
                 }
 
-                if (root != null)
+                using (var fs = File.Open(this.JsonInputPath, FileMode.Create))
+                using (var sw = new StreamWriter(fs))
+                using (var jw = new JsonTextWriter(sw))
                 {
-                    using (FileStream fs = File.Open(jsonFullPath, FileMode.Create))
-                    using (var sw = new StreamWriter(fs))
-                    using (var jw = new JsonTextWriter(sw))
-                    {
-                        // Trying to fix file not being closed issue
-                        jw.CloseOutput = true;
-                        jw.Formatting = Formatting.Indented;
-                        root.WriteTo(jw);
-                    }
+                    // Trying to fix file not being closed issue
+                    jw.CloseOutput = true;
+                    jw.Formatting = Formatting.Indented;
+                    root.WriteTo(jw);
                 }
             }
             catch (Exception)
@@ -140,12 +131,12 @@ namespace JsonPeek.MSBuild
                     new BuildErrorEventArgs(
                         string.Empty,
                         string.Empty,
-                        this.JsonFile,
+                        this.JsonInputPath,
                         0,
                         0,
                         0,
                         0,
-                        string.Format("Failed to replace jpath:{0} in file:{1}", this.JPath, jsonFullPath),
+                        string.Format("Failed to replace JPath:{0} in file:{1}", this.JPath, this.JsonInputPath),
                         string.Empty,
                         "JsonPoke"));
                 throw;

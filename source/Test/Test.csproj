@@ -70,9 +70,9 @@
   <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPeek" />
   <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPoke" />
   <Target Name="AfterBuild">
-    <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.Name">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.Name">
     </JsonPoke>
-    <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
     <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
       <Output TaskParameter="Result" ItemName="Lib69Value" />
