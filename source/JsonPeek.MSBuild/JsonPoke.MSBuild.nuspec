@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>JsonPoke.MSBuild</id>
+        <version>1.0.5</version>
+        <title>JsonPoke and JsonPeek build tasks</title>
+        <authors>Manish Kumar,Toni Arte</authors>
+        <owners>Manish Kumar</owners>
+        <licenseUrl>https://bitbucket.org/Manishkp/jsonpeek.msbuild/raw/ce89c93089b2b253cc06530ed5e6c39f9e6a6d66/nugetSource/license.txt</licenseUrl>
+        <projectUrl>https://bitbucket.org/Manishkp/jsonpeek.msbuild/</projectUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <developmentDependency>true</developmentDependency>
+        <description>JsonPoke and JsonPeek build tasks:
+Usage :
+    &lt;JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.Name"&gt;
+    &lt;/JsonPoke&gt;
+    &lt;JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value"&gt;
+    &lt;/JsonPoke&gt;
+    &lt;JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value"&gt;
+      &lt;Output TaskParameter="Result" ItemName="Lib69Value" /&gt;
+    &lt;/JsonPeek&gt;
+    &lt;PropertyGroup&gt;
+      &lt;JsonContent&gt;
+        &lt;![CDATA[{
+  "Project": {
+    "Id": "project1",
+    "IncludedLibraryVariableSetIds": [
+      {
+        "Name": "Lib-68",
+        "Value": "Empty-FromTest"
+      },
+      {
+        "Name": "Lib-69",
+        "Value": "ToBeReplaced"
+      },
+      {
+        "Name": "Lib-69",
+        "Value": "ToBeReplaced1"
+      }
+    ],
+    "DefaultToSkipIfAlreadyInstalled": false,
+    "VersioningStrategy": {
+      "DonorPackageStepId": "2624300c-958e-45ec-ae87-aadb3a3df790",
+      "Template": null
+    },
+    "Name": "Empty-FromTest",
+    "Description": "",
+    "IsDisabled": false
+  }
+}
+  ]]&gt;
+      &lt;/JsonContent&gt;
+    &lt;/PropertyGroup&gt;
+    &lt;JsonPeek JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value" JsonContent="$(JsonContent)"&gt;    
+      &lt;Output TaskParameter="Result" ItemName="Lib69Value_FromContent" /&gt;
+    &lt;/JsonPeek&gt;
+    &lt;Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" /&gt;
+    &lt;Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value From JsonContent : @(Lib69Value_FromContent)" /&gt;</description>
+        <summary>JsonPoke and JsonPeek build tasks</summary>
+        <releaseNotes>1.0.2: Added JPath derived from Newtonsoft.json http://james.newtonking.com/archive/2014/02/01/json-net-6-0-release-1-%E2%80%93-jsonpath-and-f-support
+1.0.4 : Fixing JSONPeek to return ITaskItem[] Result as output
+Upgrade to this version, Need change from .Value to .Result
+1.0.5 : Support for JsonContent and JsonInputPath.
+Upgrade to this version needs change from FullFilePath and JsonFile to one JsonInputPath property</releaseNotes>
+        <tags>json jsonpeek jsonpoke</tags>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="6.0.5" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="JsonPoke.MSBuild.Targets" target="build\JsonPoke.MSBuild.Targets" />
+        <file src="bin\Debug\JsonPeek.MSBuild.dll" target="tools\JsonPeek.MSBuild.dll" />
+        <file src="bin\Debug\Newtonsoft.Json.dll" target="tools\Newtonsoft.Json.dll" />
+        <file src="license.txt" target="license.txt" />
+    </files>
+</package>
