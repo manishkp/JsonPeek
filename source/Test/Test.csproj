@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>fd00bc95</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>6c6ac482</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -67,21 +67,52 @@
   <Target Name="BeforeBuild">
   </Target>
     -->
+  <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPeek" />
+  <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPoke" />
   <Target Name="AfterBuild">
     <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.Name">
     </JsonPoke>
     <JsonPoke FileFullPath="$(MSBuildProjectDirectory)" JsonFile="Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
-    <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
+    <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
       <Output TaskParameter="Result" ItemName="Lib69Value" />
     </JsonPeek>
-    <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" />
-  </Target>
-  <Import Project="..\packages\JsonPoke.MSBuild.1.0.4\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.4\build\JsonPoke.MSBuild.Targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+      <JsonContent>
+        <![CDATA[{
+  "Project": {
+    "Id": "project1",
+    "IncludedLibraryVariableSetIds": [
+      {
+        "Name": "Lib-68",
+        "Value": "Empty-FromTest"
+      },
+      {
+        "Name": "Lib-69",
+        "Value": "ToBeReplaced"
+      },
+      {
+        "Name": "Lib-69",
+        "Value": "ToBeReplaced1"
+      }
+    ],
+    "DefaultToSkipIfAlreadyInstalled": false,
+    "VersioningStrategy": {
+      "DonorPackageStepId": "2624300c-958e-45ec-ae87-aadb3a3df790",
+      "Template": null
+    },
+    "Name": "Empty-FromTest",
+    "Description": "",
+    "IsDisabled": false
+  }
+}
+]]>
+      </JsonContent>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\JsonPoke.MSBuild.1.0.4\build\JsonPoke.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JsonPoke.MSBuild.1.0.4\build\JsonPoke.MSBuild.Targets'))" />
+    <JsonPeek JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value" JsonContent="$(JsonContent)">    
+      <Output TaskParameter="Result" ItemName="Lib69Value_FromContent" />
+    </JsonPeek>
+    <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" />
+    <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value From JsonContent : @(Lib69Value_FromContent)" />
   </Target>
 </Project>

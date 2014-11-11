@@ -37,7 +37,7 @@ namespace JsonPeek.MSBuild
         public ITaskHost HostObject { get; set; }
 
         /// <summary>
-        /// Gets or sets JSON File Name
+        /// Gets or sets JSON full file path
         /// </summary>
         public string JsonInputPath { get; set; }
 
@@ -47,7 +47,7 @@ namespace JsonPeek.MSBuild
         public string JsonContent { get; set; }
 
         /// <summary>
-        /// Gets or sets Object Value
+        /// Gets list of Results found for the JPath
         /// </summary>
         [Output]
         public ITaskItem[] Result { get; private set; }
@@ -56,7 +56,9 @@ namespace JsonPeek.MSBuild
         /// Gets or sets JPath
         /// This is current JPath supported by Newtonsoft.Json
         /// </summary>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here."),Required]
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
+            Justification = "Reviewed. Suppression is OK here.")]
+        [Required]
         public string JPath { get; set; }
 
         /// <summary>
@@ -65,14 +67,14 @@ namespace JsonPeek.MSBuild
         /// <returns>True if success</returns>
         public bool Execute()
         {
-            if (string.IsNullOrEmpty(this.JsonInputPath) && string.IsNullOrEmpty(this.JsonContent) ||
+            if ((string.IsNullOrEmpty(this.JsonInputPath) && string.IsNullOrEmpty(this.JsonContent)) ||
                 (!string.IsNullOrEmpty(this.JsonInputPath) && !string.IsNullOrEmpty(this.JsonContent)))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                     string.Format(
                     "Skipping json peek, as both 'JsonInputPath' and 'JsonContent' are empty (or both are defined)",
-                    JsonInputPath),
+                    this.JsonInputPath),
                     string.Empty,
                     "JsonPeek",
                     MessageImportance.Normal));
@@ -80,13 +82,13 @@ namespace JsonPeek.MSBuild
                 return false;
             }
 
-            if (!File.Exists(JsonInputPath) && string.IsNullOrEmpty(this.JsonContent))
+            if (!File.Exists(this.JsonInputPath) && string.IsNullOrEmpty(this.JsonContent))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
                             "Skipping json peek, as there are no json files found at {0}",
-                            JsonInputPath),
+                            this.JsonInputPath),
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Normal));
@@ -114,12 +116,12 @@ namespace JsonPeek.MSBuild
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
-                        string.Format("Started json peek for file {0}", JsonInputPath),
+                        string.Format("Started json peek for file {0}", this.JsonInputPath),
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Normal));
 
-                using (var sr = new StreamReader(JsonInputPath))
+                using (var sr = new StreamReader(this.JsonInputPath))
                 {
                     content = sr.ReadToEnd();
                 }
