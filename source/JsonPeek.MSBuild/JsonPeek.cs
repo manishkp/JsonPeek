@@ -108,7 +108,7 @@ namespace JsonPeek.MSBuild
                 return false;
             }
 
-            var returnValue = new List<string>();
+            var returnValue = new List<ITaskItem>();
 
             string content;
 
@@ -150,11 +150,54 @@ namespace JsonPeek.MSBuild
                         string.Empty,
                         "JsonPeek",
                         MessageImportance.Low));
-                returnValue.Add(currentNode.ToString());
+
+                returnValue.AddRange(GetTaskItem(currentNode));                        
             }
 
-            this.Result = returnValue.Select(outputVal => (ITaskItem)new TaskItem(outputVal)).ToArray();
+            this.Result = returnValue.ToArray();
             return true;
+        }
+
+        /// <summary>
+        /// The get task item.
+        /// </summary>
+        /// <param name="jsonObject">
+        /// The json object.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>. of TaskItems
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static IEnumerable<ITaskItem> GetTaskItem(JToken jsonObject)
+        {
+            var returnValue = new List<ITaskItem>();
+            if (jsonObject.Type == JTokenType.Array)
+            {
+                foreach (var arrayNode in jsonObject)
+                {
+                    returnValue.AddRange(GetTaskItem(arrayNode));
+                }               
+            }
+            else if (jsonObject.Type == JTokenType.Object)
+            {
+                var taskItem = new TaskItem(jsonObject.ToString());               
+                foreach (var prop in jsonObject.OfType<JProperty>())
+                {
+                    // we only support 1 level of complex objects
+                    taskItem.SetMetadata(prop.Name, prop.Value.ToString());
+                }
+
+                returnValue.Add(taskItem);
+            }
+            else
+            {
+                var taskItem = new TaskItem(jsonObject.ToString());
+                // this helps get metadata batching scenario work %(array.Value)
+                taskItem.SetMetadata("Value", jsonObject.ToString());
+                returnValue.Add(taskItem);
+            }
+
+            return returnValue;
         }
     }
 }

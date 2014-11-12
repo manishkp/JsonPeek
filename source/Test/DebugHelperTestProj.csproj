@@ -79,40 +79,33 @@
     </JsonPeek>
     <PropertyGroup>
       <JsonContent>
-        <![CDATA[{
-  "Project": {
-    "Id": "project1",
-    "IncludedLibraryVariableSetIds": [
-      {
-        "Name": "Lib-68",
-        "Value": "Empty-FromTest"
-      },
-      {
-        "Name": "Lib-69",
-        "Value": "ToBeReplaced"
-      },
-      {
-        "Name": "Lib-69",
-        "Value": "ToBeReplaced1"
-      }
-    ],
-    "DefaultToSkipIfAlreadyInstalled": false,
-    "VersioningStrategy": {
-      "DonorPackageStepId": "2624300c-958e-45ec-ae87-aadb3a3df790",
-      "Template": null
-    },
-    "Name": "Empty-FromTest",
-    "Description": "",
-    "IsDisabled": false
-  }
+        <![CDATA[{ 
+  "Projects":[
+	{
+    "Name": "P1",
+    "OutputFile": "P1.json",    
+    "Variables": [    
+      "Var1",
+      "Var2"      
+    	]
+	},
+	{	
+    "Name": "P2",
+    "OutputFile": "P2.json",    
+    "Variables": [    
+      "Var1",
+      "Var2"      
+    	]
+	}
+   ]
 }
 ]]>
       </JsonContent>
     </PropertyGroup>
-    <JsonPeek JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value" JsonContent="$(JsonContent)">    
-      <Output TaskParameter="Result" ItemName="Lib69Value_FromContent" />
+    <JsonPeek JPath="$.Projects" JsonContent="$(JsonContent)">    
+      <Output TaskParameter="Result" ItemName="TestProjects" />
     </JsonPeek>
     <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" />
-    <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value From JsonContent : @(Lib69Value_FromContent)" />
+    <Message Text="Project values: %(TestProjects.Name)" />
   </Target>
 </Project>

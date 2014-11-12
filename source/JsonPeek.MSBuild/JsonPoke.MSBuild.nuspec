@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>JsonPoke.MSBuild</id>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
         <title>JsonPoke and JsonPeek build tasks</title>
         <authors>Manish Kumar,Toni Arte</authors>
         <owners>Manish Kumar</owners>
@@ -21,47 +21,43 @@ Usage :
     &lt;/JsonPeek&gt;
     &lt;PropertyGroup&gt;
       &lt;JsonContent&gt;
-        &lt;![CDATA[{
-  "Project": {
-    "Id": "project1",
-    "IncludedLibraryVariableSetIds": [
-      {
-        "Name": "Lib-68",
-        "Value": "Empty-FromTest"
-      },
-      {
-        "Name": "Lib-69",
-        "Value": "ToBeReplaced"
-      },
-      {
-        "Name": "Lib-69",
-        "Value": "ToBeReplaced1"
-      }
-    ],
-    "DefaultToSkipIfAlreadyInstalled": false,
-    "VersioningStrategy": {
-      "DonorPackageStepId": "2624300c-958e-45ec-ae87-aadb3a3df790",
-      "Template": null
-    },
-    "Name": "Empty-FromTest",
-    "Description": "",
-    "IsDisabled": false
-  }
+        &lt;![CDATA[{ 
+  "Projects":[
+ {
+    "Name": "P1",
+    "OutputFile": "P1.json",    
+    "Variables": [    
+      "Var1",
+      "Var2"      
+     ]
+ },
+ { 
+    "Name": "P2",
+    "OutputFile": "P2.json",    
+    "Variables": [    
+      "Var1",
+      "Var2"      
+     ]
+ }
+   ]
 }
-  ]]&gt;
+]]&gt;
       &lt;/JsonContent&gt;
     &lt;/PropertyGroup&gt;
-    &lt;JsonPeek JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value" JsonContent="$(JsonContent)"&gt;    
-      &lt;Output TaskParameter="Result" ItemName="Lib69Value_FromContent" /&gt;
+    &lt;JsonPeek JPath="$.Projects" JsonContent="$(JsonContent)"&gt;    
+      &lt;Output TaskParameter="Result" ItemName="TestProjects" /&gt;
     &lt;/JsonPeek&gt;
     &lt;Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" /&gt;
-    &lt;Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value From JsonContent : @(Lib69Value_FromContent)" /&gt;</description>
+    &lt;Message Text="Project values: %(TestProjects.Name)" /&gt;</description>
         <summary>JsonPoke and JsonPeek build tasks</summary>
         <releaseNotes>1.0.2: Added JPath derived from Newtonsoft.json http://james.newtonking.com/archive/2014/02/01/json-net-6-0-release-1-%E2%80%93-jsonpath-and-f-support
 1.0.4 : Fixing JSONPeek to return ITaskItem[] Result as output
 Upgrade to this version, Need change from .Value to .Result
 1.0.5 : Support for JsonContent and JsonInputPath.
-Upgrade to this version needs change from FullFilePath and JsonFile to one JsonInputPath property</releaseNotes>
+Upgrade to this version needs change from FullFilePath and JsonFile to one JsonInputPath property
+1.0.6 : JsonPeek enhancements:
+a. Returing Result as array if JPath points to an array.
+b. Returning Meaningfull object that simple strings, so support for batching: If the Result Item is an object, then we are exposing all attributes as metadata on the Result item. For Array of simple values like array of strings, "Value" metadata is exposed, so that %(array.Value) will work.</releaseNotes>
         <tags>json jsonpeek jsonpoke</tags>
         <dependencies>
             <dependency id="Newtonsoft.Json" version="6.0.5" />
