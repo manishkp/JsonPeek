@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>ec297fc6</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>4c21b1d4</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -78,8 +78,7 @@
       <Output TaskParameter="Result" ItemName="Lib69Value" />
     </JsonPeek>
     <PropertyGroup>
-      <JsonContent>
-        <![CDATA[{ 
+      <JsonContent><![CDATA[{ 
   "Projects":[
 	{
     "Name": "P1",
@@ -99,8 +98,7 @@
 	}
    ]
 }
-]]>
-      </JsonContent>
+]]></JsonContent>
     </PropertyGroup>
     <JsonPeek JPath="$.Projects" JsonContent="$(JsonContent)">
       <Output TaskParameter="Result" ItemName="TestProjects" />
@@ -114,7 +112,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\JsonPoke.MSBuild.1.0.5\build\JsonPoke.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JsonPoke.MSBuild.1.0.5\build\JsonPoke.MSBuild.Targets'))" />
+    <Error Condition="!Exists('..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets'))" />
   </Target>
-  <Import Project="..\packages\JsonPoke.MSBuild.1.0.5\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.5\build\JsonPoke.MSBuild.Targets')" />
+  <Import Project="..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets')" />
 </Project>
