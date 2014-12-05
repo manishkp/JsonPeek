@@ -12,6 +12,7 @@ namespace JsonPeek.MSBuild
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Collections.Generic;
 
     using Microsoft.Build.Framework;
 
@@ -42,9 +43,13 @@ namespace JsonPeek.MSBuild
         /// <summary>
         /// Gets or sets Object Value
         /// </summary>
-        [Required]
-        public string Value { get; set; }   
-  
+        public string Property { get; set; }
+
+        /// <summary>
+        /// Gets or sets Object Value
+        /// </summary>
+        public ITaskItem[] Item { get; set; }  
+        
         /// <summary>
         /// Gets or sets JPath
         /// This is current JPath supported by Newtonsoft.Json 
@@ -71,19 +76,19 @@ namespace JsonPeek.MSBuild
                 return false;
             }
 
-            if (string.IsNullOrEmpty(this.JPath) || string.IsNullOrEmpty(this.Value))
+            if (string.IsNullOrEmpty(this.JPath) || (string.IsNullOrEmpty(this.Property) && this.Item == null))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
-                            "Skipping json replacement, no 'JPath' or 'Value' specified"),
+                            "Skipping json replacement, no 'JPath' or 'Property'/'Item' specified"),
                         string.Empty,
                         "JsonPoke",
                         MessageImportance.Normal));
 
                 return false;
             }
-          
+
             this.BuildEngine.LogMessageEvent(
                 new BuildMessageEventArgs(
                     string.Format("Started json poke for file {0}", this.JsonInputPath),
@@ -104,13 +109,33 @@ namespace JsonPeek.MSBuild
 
                     foreach (var currentNode in currentNodes)
                     {
-                        this.BuildEngine.LogMessageEvent(
-                            new BuildMessageEventArgs(
-                                string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.Value),
-                                string.Empty,
-                                "JsonPoke",
-                                MessageImportance.Normal));
-                        currentNode.Replace(new JValue(this.Value));
+                        if (!string.IsNullOrEmpty(this.Property))
+                        {
+                            this.BuildEngine.LogMessageEvent(
+                                new BuildMessageEventArgs(
+                                    string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.Property),
+                                    string.Empty,
+                                    "JsonPoke",
+                                    MessageImportance.Normal));
+                            currentNode.Replace(new JValue(this.Property));
+                        }
+                        if (this.Item != null)
+                        {
+                            List<String> items = new List<String>();
+
+                            foreach (ITaskItem item in Item)
+                            {
+                                items.Add(item.GetMetadata("Identity"));
+                            }
+
+                            this.BuildEngine.LogMessageEvent(
+                                new BuildMessageEventArgs(
+                                    string.Format("Replacing value : {0} with {1}", currentNode.ToString(), string.Join(",", items.ToArray())),
+                                    string.Empty,
+                                    "JsonPoke",
+                                    MessageImportance.Normal));
+                            currentNode.Replace(new JArray(items));
+                        }
                     }
                 }
 
