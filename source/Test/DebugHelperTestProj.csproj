@@ -70,9 +70,9 @@
   <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPeek" />
   <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPoke" />
   <Target Name="AfterBuild">
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Property="Empty-FromTest" JPath="Project.Name">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest" JPath="Project.Name">
     </JsonPoke>
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Property="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
     <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
       <Output TaskParameter="Result" ItemName="Lib69Value" />
@@ -105,6 +105,15 @@
     <JsonPeek JPath="$.Projects" JsonContent="$(JsonContent)">    
       <Output TaskParameter="Result" ItemName="TestProjects" />
     </JsonPeek>
+    <ItemGroup>
+      <TestArray1 Include="test1.txt"/>
+      <TestArray1 Include="test2.txt"/>
+      <TestArray2 Include="test1.txt"/>
+    </ItemGroup>
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="@(TestArray1)" JPath="Project.TestArray">
+    </JsonPoke>
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="t1.txt;t2.txt" JPath="Project.TestArray">
+    </JsonPoke>
     <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" />
     <Message Text="Project values: %(TestProjects.Name)" />
   </Target>

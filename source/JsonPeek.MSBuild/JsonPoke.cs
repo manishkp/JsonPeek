@@ -13,6 +13,7 @@ namespace JsonPeek.MSBuild
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Microsoft.Build.Framework;
 
@@ -41,14 +42,14 @@ namespace JsonPeek.MSBuild
         public string JsonInputPath { get; set; }     
    
         /// <summary>
-        /// Gets or sets Object Value
+        /// Gets or sets JValue
         /// </summary>
-        public string Property { get; set; }
+        public string JValue { get; set; }
 
         /// <summary>
-        /// Gets or sets Object Value
+        /// Gets or sets Array
         /// </summary>
-        public ITaskItem[] Item { get; set; }  
+        public ITaskItem[] JArray { get; set; }  
         
         /// <summary>
         /// Gets or sets JPath
@@ -76,12 +77,12 @@ namespace JsonPeek.MSBuild
                 return false;
             }
 
-            if (string.IsNullOrEmpty(this.JPath) || (string.IsNullOrEmpty(this.Property) && this.Item == null))
+            if (string.IsNullOrEmpty(this.JPath) || (string.IsNullOrEmpty(this.JValue) && this.JArray == null))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
-                            "Skipping json replacement, no 'JPath' or 'Property'/'Item' specified"),
+                            "Skipping json replacement, no 'JPath' or 'JValue'/'JArray' specified"),
                         string.Empty,
                         "JsonPoke",
                         MessageImportance.Normal));
@@ -109,32 +110,25 @@ namespace JsonPeek.MSBuild
 
                     foreach (var currentNode in currentNodes)
                     {
-                        if (!string.IsNullOrEmpty(this.Property))
+                        if (!string.IsNullOrEmpty(this.JValue))
                         {
                             this.BuildEngine.LogMessageEvent(
                                 new BuildMessageEventArgs(
-                                    string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.Property),
+                                    string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.JValue),
                                     string.Empty,
                                     "JsonPoke",
                                     MessageImportance.Normal));
-                            currentNode.Replace(new JValue(this.Property));
+                            currentNode.Replace(new JValue(this.JValue));
                         }
-                        if (this.Item != null)
+                        else if (this.JArray != null)
                         {
-                            List<String> items = new List<String>();
-
-                            foreach (ITaskItem item in Item)
-                            {
-                                items.Add(item.GetMetadata("Identity"));
-                            }
-
                             this.BuildEngine.LogMessageEvent(
                                 new BuildMessageEventArgs(
-                                    string.Format("Replacing value : {0} with {1}", currentNode.ToString(), string.Join(",", items.ToArray())),
+                                    string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.JArray.Select(v => v.ToString())),
                                     string.Empty,
                                     "JsonPoke",
                                     MessageImportance.Normal));
-                            currentNode.Replace(new JArray(items));
+                            currentNode.Replace(new JArray(this.JArray.Select(v => v.ToString())));
                         }
                     }
                 }

@@ -22,7 +22,10 @@
     },
     "Name": "Empty-FromTest",
     "Description": "",
-    "TestArray": ["test1.txt"],
+    "TestArray": [
+      "t1.txt",
+      "t2.txt"
+    ],
     "IsDisabled": false
   }
 }

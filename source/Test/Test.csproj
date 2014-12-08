@@ -70,9 +70,9 @@
   </Target>
     -->
   <Target Name="AfterBuild">
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Property="Empty-FromTest" JPath="Project.Name">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest" JPath="Project.Name">
     </JsonPoke>
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Property="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
     <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
       <Output TaskParameter="Result" ItemName="Lib69Value" />
@@ -110,9 +110,9 @@
        <TestArray1 Include="test2.txt"/>
        <TestArray2 Include="test1.txt"/>
     </ItemGroup>
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Item="@(TestArray1)" JPath="Project.TestArray">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="@(TestArray1)" JPath="Project.TestArray">
     </JsonPoke>
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Item="@(TestArray2)" JPath="Project.TestArray">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="t1.txt;t2.txt" JPath="Project.TestArray">
     </JsonPoke>
   </Target>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
