@@ -49,7 +49,18 @@ namespace JsonPeek.MSBuild
         /// <summary>
         /// Gets or sets Array
         /// </summary>
-        public ITaskItem[] JArray { get; set; }  
+        public ITaskItem[] JArray { get; set; }
+
+        /// <summary>
+        /// Gets or sets Object
+        /// </summary>
+        public ITaskItem JObject { get; set; }
+
+        /// <summary>
+        /// List of Metadata Values to include in for objects
+        /// </summary>
+        public string[] Metadata { get; set; }
+
         
         /// <summary>
         /// Gets or sets JPath
@@ -77,12 +88,12 @@ namespace JsonPeek.MSBuild
                 return false;
             }
 
-            if (string.IsNullOrEmpty(this.JPath) || (string.IsNullOrEmpty(this.JValue) && this.JArray == null))
+            if (string.IsNullOrEmpty(this.JPath) || (string.IsNullOrEmpty(this.JValue) && this.JArray == null && this.JObject == null))
             {
                 this.BuildEngine.LogMessageEvent(
                     new BuildMessageEventArgs(
                         string.Format(
-                            "Skipping json replacement, no 'JPath' or 'JValue'/'JArray' specified"),
+                            "Skipping json replacement, no 'JPath' or 'JValue'/'JArray'/'JObject' specified"),
                         string.Empty,
                         "JsonPoke",
                         MessageImportance.Normal));
@@ -104,7 +115,7 @@ namespace JsonPeek.MSBuild
                 using (var sr = new StreamReader(this.JsonInputPath))
                 {
                     var content = sr.ReadToEnd();
-                    root = JObject.Parse(content);
+                    root = Newtonsoft.Json.Linq.JObject.Parse(content);
 
                     var currentNodes = root.SelectTokens(this.JPath, false);
 
@@ -124,11 +135,21 @@ namespace JsonPeek.MSBuild
                         {
                             this.BuildEngine.LogMessageEvent(
                                 new BuildMessageEventArgs(
-                                    string.Format("Replacing value : {0} with {1}", currentNode.ToString(), this.JArray.Select(v => v.ToString())),
+                                    string.Format("Replacing array value for {0} ", currentNode.ToString()),
                                     string.Empty,
                                     "JsonPoke",
                                     MessageImportance.Normal));
-                            currentNode.Replace(new JArray(this.JArray.Select(v => v.ToString())));
+                            currentNode.Replace(new JArray(this.JArray.Select(this.GetObject)));
+                        }
+                        else if (this.JObject != null)
+                        {
+                            this.BuildEngine.LogMessageEvent(
+                                new BuildMessageEventArgs(
+                                    string.Format("Replacing object value for {0}", currentNode.ToString()),
+                                    string.Empty,
+                                    "JsonPoke",
+                                    MessageImportance.Normal));
+                            currentNode.Replace(this.GetObject(this.JObject));
                         }
                     }
                 }
@@ -162,6 +183,32 @@ namespace JsonPeek.MSBuild
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// The get object.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        private JToken GetObject(ITaskItem value)
+        {
+            if (this.Metadata == null
+                || this.Metadata.Length <= 0)
+            {
+                return new JValue(value.ToString());
+            }
+
+            var jsonObject = new JObject();
+            foreach (var metadataName in this.Metadata)
+            {
+                jsonObject[metadataName] = value.GetMetadata(metadataName);
+            }
+
+            return jsonObject;
         }
     }
 }

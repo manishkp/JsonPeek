@@ -4,7 +4,7 @@
     "IncludedLibraryVariableSetIds": [
       {
         "Name": "Lib-68",
-        "Value": "Empty-FromTest"
+        "Value": "Empty-FromTest2"
       },
       {
         "Name": "Lib-69",
@@ -20,12 +20,27 @@
       "DonorPackageStepId": "2624300c-958e-45ec-ae87-aadb3a3df790",
       "Template": null
     },
-    "Name": "Empty-FromTest",
+    "Name": "Empty-FromTest1",
     "Description": "",
     "TestArray": [
-      "t1.txt",
-      "t2.txt"
+      {
+        "MyProp": "test1",
+        "Identity": "test1.txt"
+      },
+      {
+        "MyProp": "test2",
+        "Identity": "test2.txt"
+      }
     ],
+    "TestArray1": [
+      "t11.txt",
+      "t22.txt"
+    ],
+    "TestObject": {
+      "Major": "1",
+      "Minor": "2",
+      "Build": "3"
+    },
     "IsDisabled": false
   }
 }
