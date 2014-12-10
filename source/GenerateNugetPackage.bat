@@ -1,0 +1,1 @@
+.nuget\nuget.exe pack -NoPackageAnalysis .\JsonPeek.MSBuild\JsonPoke.MSBuild.nuspec -Verbosity detailed -OutputDirectory ..\nugetPackages
