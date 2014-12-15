@@ -70,13 +70,26 @@
   <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPeek" />
   <UsingTask AssemblyFile="..\JsonPeek.MSBuild\bin\Debug\JsonPeek.MSBuild.dll" TaskName="JsonPoke" />
   <Target Name="AfterBuild">
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.Name">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest1" JPath="Project.Name">
     </JsonPoke>
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest2" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
     <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
       <Output TaskParameter="Result" ItemName="Lib69Value" />
     </JsonPeek>
+    <ItemGroup>
+      <TestArray1 Include="test1.txt">
+        <MyProp>test1</MyProp>
+      </TestArray1>
+      <TestArray1 Include="test2.txt">
+        <MyProp>test2</MyProp>
+      </TestArray1>
+      <BuildNumber Include="1.2.3.4">
+        <Major>1</Major>
+        <Minor>2</Minor>
+        <Build>3</Build>
+      </BuildNumber>
+    </ItemGroup>
     <PropertyGroup>
       <JsonContent>
         <![CDATA[{ 
@@ -101,10 +114,18 @@
 }
 ]]>
       </JsonContent>
+     
     </PropertyGroup>
     <JsonPeek JPath="$.Projects" JsonContent="$(JsonContent)">    
       <Output TaskParameter="Result" ItemName="TestProjects" />
     </JsonPeek>
+   
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="@(TestArray1)" JPath="Project.TestArray" Metadata="MyProp;Identity">
+    </JsonPoke>
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="t11.txt;t22.txt" JPath="Project.TestArray1">
+    </JsonPoke>
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JObject="@(BuildNumber)" JPath="Project.TestObject" Metadata="Major;Minor;Build">
+    </JsonPoke>
     <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" />
     <Message Text="Project values: %(TestProjects.Name)" />
   </Target>

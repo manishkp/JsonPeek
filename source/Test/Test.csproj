@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>4c21b1d4</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>ba40b104</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -70,13 +70,26 @@
   </Target>
     -->
   <Target Name="AfterBuild">
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.Name">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest1" JPath="Project.Name">
     </JsonPoke>
-    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" Value="Empty-FromTest" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest2" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-68')].Value">
     </JsonPoke>
     <JsonPeek JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JPath="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value">
       <Output TaskParameter="Result" ItemName="Lib69Value" />
     </JsonPeek>
+    <ItemGroup>
+      <TestArray1 Include="test1.txt">
+        <MyProp>test1</MyProp>
+      </TestArray1>
+      <TestArray1 Include="test2.txt">
+        <MyProp>test2</MyProp>
+      </TestArray1>
+      <BuildNumber Include="1.2.3.4">
+        <Major>1</Major>
+        <Minor>2</Minor>
+        <Build>3</Build>
+      </BuildNumber>
+    </ItemGroup>
     <PropertyGroup>
       <JsonContent><![CDATA[{ 
   "Projects":[
@@ -103,6 +116,12 @@
     <JsonPeek JPath="$.Projects" JsonContent="$(JsonContent)">
       <Output TaskParameter="Result" ItemName="TestProjects" />
     </JsonPeek>
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="@(TestArray1)" JPath="Project.TestArray" Metadata="MyProp;Identity">
+    </JsonPoke>
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="t11.txt;t22.txt" JPath="Project.TestArray1">
+    </JsonPoke>
+    <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JObject="@(BuildNumber)" JPath="Project.TestObject" Metadata="Major;Minor;Build">
+    </JsonPoke>
     <Message Text="Project.IncludedLibraryVariableSetIds[?(@.Name == 'Lib-69')].Value : @(Lib69Value)" />
     <Message Text="Project values: %(TestProjects.Name)" />
   </Target>
@@ -112,7 +131,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets'))" />
+    <Error Condition="!Exists('..\packages\JsonPoke.MSBuild.1.0.7\build\JsonPoke.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JsonPoke.MSBuild.1.0.7\build\JsonPoke.MSBuild.Targets'))" />
   </Target>
-  <Import Project="..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.6\build\JsonPoke.MSBuild.Targets')" />
+  <Import Project="..\packages\JsonPoke.MSBuild.1.0.7\build\JsonPoke.MSBuild.Targets" Condition="Exists('..\packages\JsonPoke.MSBuild.1.0.7\build\JsonPoke.MSBuild.Targets')" />
 </Project>
