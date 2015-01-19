@@ -3,8 +3,8 @@
 MsBuild tasks which allows reading and updating Json (in-memory or from disk File).
 Supports MSbuild metadata, which allows one to read and update Json objects, arrays, etc.
 
-Usage :
-JSON Poke: 
+Usage : 
+## JSON Poke:
     1. <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JValue="Empty-FromTest1" JPath="Project.Name">
         </JsonPoke>
     2 a. <JsonPoke JsonInputPath="$(MSBuildProjectDirectory)\Project.json" JArray="@(TestArray1)" JPath="Project.TestArray"            Metadata="MyProp;Identity">
@@ -22,7 +22,7 @@ JSON Poke:
         </JsonContent>
       </PropertyGroup>
 
-JSON Peek:
+## JSON Peek: 
     <JsonPeek JPath="$.Projects" JsonContent="$(JsonContent)">    
       <Output TaskParameter="Result" ItemName="TestProjects" />
     </JsonPeek>
